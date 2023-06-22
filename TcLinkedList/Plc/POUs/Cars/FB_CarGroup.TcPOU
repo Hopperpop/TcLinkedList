@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CarGroup" Id="{dee57356-43af-4a4c-9e1d-d5468a41ae59}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_CarGroup EXTENDS FB_LinkedList_Master IMPLEMENTS ITF_Car
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="p_Locked" Id="{5d545e78-0a37-4b95-a748-b38f659c9a05}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY p_Locked : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{3782913b-1a3c-49c9-9526-5922edfe5232}">
+        <Declaration><![CDATA[VAR
+	i:		UINT;
+	itfCar:	ITF_Car;
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[p_Locked := TRUE;
+
+FOR i := 0 TO ListLength DO
+	IF __QUERYINTERFACE( mListGetNode(i), itfCar) THEN
+		p_Locked R= NOT itfCar.p_Locked;
+	END_IF
+END_FOR]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{d7c7424c-d126-4d65-8cc0-f4c3b2836cd6}">
+        <Declaration><![CDATA[VAR
+	i:		UINT;
+	itfCar:	ITF_Car;
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[FOR i := 0 TO ListLength DO
+	IF __QUERYINTERFACE( mListGetNode(i), itfCar) THEN
+		itfCar.p_Locked := p_Locked;
+	END_IF
+END_FOR]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+  </POU>
+</TcPlcObject>

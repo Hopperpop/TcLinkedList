@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="ITF_LinkedList_Master" Id="{af4fff4a-9016-4b05-8cb2-d5290d14c357}">
+    <Declaration><![CDATA[INTERFACE ITF_LinkedList_Master EXTENDS ITF_LinkedList_Node]]></Declaration>
+    <Method Name="mListAdd" Id="{a7d15d52-bf24-4b5f-b776-2ea30de0bc0c}">
+      <Declaration><![CDATA[METHOD mListAdd : BOOL
+VAR_INPUT
+	itfNode:	ITF_LinkedList_Node;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="mListRemove" Id="{d51da422-89c6-4f99-aa46-9200061d4fd7}">
+      <Declaration><![CDATA[METHOD mListRemove : BOOL
+VAR_INPUT
+	itfNode:	ITF_LinkedList_Node;
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

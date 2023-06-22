@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_LinkedList_Master" Id="{909e1e1a-5ca7-439a-b1b2-f8a681ba51a1}" SpecialFunc="None">
+    <Declaration><![CDATA[{attribute 'hide_all_locals'}
+FUNCTION_BLOCK FB_LinkedList_Master IMPLEMENTS ITF_LinkedList_Master
+
+VAR_OUTPUT
+	ListLength:		UINT;	//Length of the linked list
+END_VAR
+
+VAR
+	itfHead:	ITF_LinkedList_Node;
+	itfTail:	ITF_LinkedList_Node;
+	
+	{attribute 'no_copy'}
+	it:			UINT; 					//Local iterator
+	{attribute 'no_copy'}
+	itfIt:		ITF_LinkedList_Node;	//Iterated node
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="mListAdd" Id="{b607fba2-6ce2-441e-abef-112346945b36}">
+      <Declaration><![CDATA[METHOD mListAdd : BOOL
+VAR_INPUT
+	itfNode:	ITF_LinkedList_Node;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF itfNode <> 0 THEN
+	IF ListLength = 0 THEN
+		//--Empty list--
+		itfHead 				:= itfNode;
+		itfTail 				:= itfNode;
+		itfNode.p_ListPrevious 	:= THIS^;
+		itfNode.p_ListNext		:= THIS^;
+	ELSE
+		//--Existing list--
+		itfTail.p_ListNext 		:= itfNode;
+		itfNode.p_ListNext		:= THIS^;
+		itfNode.p_ListPrevious	:= itfTail;
+		itfTail					:= itfNode;
+	END_IF
+	
+	ListLength := ListLength + 1;
+END_IF
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="mListGetNode" Id="{bcead8af-0992-0587-03f8-0e27a7b9bed0}">
+      <Declaration><![CDATA[METHOD mListGetNode : ITF_LinkedList_Node
+VAR_INPUT
+	i:		UINT; //0 => Length - 1
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Reread/init
+IF it = 0 THEN
+	itfIt  	:= itfHead;
+END_IF
+
+//Reset to head
+IF i = 0 THEN
+	itfIt 	:= itfHead;
+	it		:= 0;	
+END_IF
+
+WHILE it < i AND_THEN itfIt <> 0 AND_THEN NOT itfIt.p_IsLinkMaster  DO
+	itfIt	:= itfIt.p_ListNext;
+	it		:= it + 1; 
+END_WHILE
+
+WHILE it > i AND_THEN itfIt <> 0 AND_THEN NOT itfIt.p_IsLinkMaster DO
+	itfIt	:= itfIt.p_ListPrevious;
+	it		:= it - 1;
+END_WHILE
+
+IF itfIt <> 0 AND_THEN NOT itfIt.p_IsLinkMaster THEN
+	//Node found, return interface
+	mListGetNode := itfIt;
+ELSE
+	//Something went wrong, reset to head
+	itfIt 	:= itfHead;
+	it		:= 0;
+END_IF
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="mListRemove" Id="{3b55f076-555c-4fc3-8b18-366ea074662c}">
+      <Declaration><![CDATA[METHOD mListRemove : BOOL
+VAR_INPUT
+	itfNode:	ITF_LinkedList_Node;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Improve: Check if node is indeed in the list of this master
+
+IF itfNode <> 0 THEN
+	
+	IF itfNode.p_ListPrevious <> 0 THEN
+		
+		IF itfNode.p_ListNext <> 0 THEN
+			itfNode.p_ListPrevious.p_ListNext := itfNode.p_ListNext;
+			itfNode.p_ListNext.p_ListPrevious := itfNode.p_ListPrevious;
+		ELSE
+			itfNode.p_ListPrevious.p_ListNext := 0;
+		END_IF
+		
+		mListRemove := TRUE;
+	END_IF
+
+	itfNode.p_ListNext 		:= 0;
+	itfNode.p_ListPrevious	:= 0;
+END_IF
+
+IF mListRemove THEN
+	ListLength := MAX(0,ListLength - 1);
+	
+	//Reset iterator to beginning we don't know where the nodes is removed and recounting is needed
+	it		:= 0;
+	itfIt	:= itfHead;
+END_IF
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="p_IsLinkMaster" Id="{2a6d785a-86c0-433b-a24c-ac3427aa4f45}">
+      <Declaration><![CDATA[PROPERTY p_IsLinkMaster : BOOL]]></Declaration>
+      <Get Name="Get" Id="{3897d187-0f06-4fa7-b743-b21200789ecd}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[p_IsLinkMaster := TRUE;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="p_ListNext" Id="{ae166a11-8fef-4918-a1c4-3110402390b0}">
+      <Declaration><![CDATA[PROPERTY p_ListNext : ITF_LinkedList_Node
+]]></Declaration>
+      <Get Name="Get" Id="{1f5c5491-6735-478a-86b7-0fd880346768}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[p_ListNext := itfHead;
+]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{0df71556-acb3-406e-a5c3-c9462f00db3c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[itfHead := p_ListNext;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_ListPrevious" Id="{517e941e-587b-4245-b51d-cacf4416595b}">
+      <Declaration><![CDATA[PROPERTY p_ListPrevious : ITF_LinkedList_Node
+]]></Declaration>
+      <Get Name="Get" Id="{d9e84c76-6174-4f27-993b-c6a450f98527}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[p_ListPrevious := itfTail;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{67b61b72-3b72-45bd-91a4-4470cf2df455}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[itfTail := p_ListPrevious;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+  </POU>
+</TcPlcObject>

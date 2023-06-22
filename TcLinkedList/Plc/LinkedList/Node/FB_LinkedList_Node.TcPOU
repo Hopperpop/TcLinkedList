@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_LinkedList_Node" Id="{90324853-2e5f-49f8-8220-eae435ca271f}" SpecialFunc="None">
+    <Declaration><![CDATA[{attribute 'hide_all_locals'}
+FUNCTION_BLOCK FB_LinkedList_Node IMPLEMENTS ITF_LinkedList_Node
+
+VAR
+	itf_ListNext:		ITF_LinkedList_Node;
+	itf_ListPrevious:	ITF_LinkedList_Node;
+	itf_LinkMaster:		ITF_LinkedList_Master;
+	
+	{attribute 'no_copy'}
+	_bInCopyCode : 		BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="FB_exit" Id="{fa2242ef-60a6-0868-3bec-653fb43dd7fb}">
+      <Declaration><![CDATA[METHOD FB_exit : BOOL
+VAR_INPUT
+	bInCopyCode : BOOL; // if TRUE, the exit method is called for exiting an instance that is copied afterwards (online change).
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bInCopyCode THEN
+	//Destroy and remove from list
+	IF itf_LinkMaster <> 0 THEN
+		itf_LinkMaster.mListRemove( THIS^ );
+	END_IF
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_init" Id="{b0701d5a-3a14-05ed-381a-206b7903b86d}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : 	BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : 	BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_bInCopyCode 	:= bInCopyCode;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_reinit" Id="{4813a597-044b-43a1-991e-2307a175fc43}">
+      <Declaration><![CDATA[METHOD FB_reinit : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_bInCopyCode := FALSE; //Next set of p_LinkMaster wont be from initializing new instance during copy]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="p_IsLinkMaster" Id="{17f08b8b-3c60-4702-bfc6-070a986dfc0c}">
+      <Declaration><![CDATA[PROPERTY p_IsLinkMaster : BOOL]]></Declaration>
+      <Get Name="Get" Id="{0990a748-3c52-4160-af65-bc1a7d44b7c0}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[p_IsLinkMaster := FALSE;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="p_LinkMaster" Id="{6076d27c-543e-491b-82fc-59b02048ee72}">
+      <Declaration><![CDATA[PROPERTY p_LinkMaster : ITF_LinkedList_Master]]></Declaration>
+      <Get Name="Get" Id="{51931b2a-3baa-4776-ad59-fab0b175695c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[p_LinkMaster := itf_LinkMaster;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{1c3e8a69-b5ff-44dd-9260-37ec38464d00}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF NOT _bInCopyCode THEN //Set not called during process of copying function block
+	
+	IF itf_LinkMaster <> 0 THEN
+		//Remove from old master
+		itf_LinkMaster.mListRemove( THIS^ );
+	END_IF
+
+	IF p_LinkMaster <> 0 THEN
+		//Add to new master
+		p_LinkMaster.mListAdd( THIS^ );
+		//Store master
+		itf_LinkMaster := p_LinkMaster;
+	END_IF
+
+END_IF
+
+
+
+
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_ListNext" Id="{f41588f3-e43c-4372-8a12-18f9caf92429}">
+      <Declaration><![CDATA[PROPERTY p_ListNext : ITF_LinkedList_Node
+]]></Declaration>
+      <Get Name="Get" Id="{4ade9195-19e2-4299-acdf-9880f7faef05}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[p_ListNext := itf_ListNext;
+]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{67f5a8b1-870d-4fb1-a4c9-6e8c5f1e5aaa}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[itf_ListNext := p_ListNext;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_ListPrevious" Id="{21cc6a69-d3da-400d-81b9-854f8aa2122d}">
+      <Declaration><![CDATA[PROPERTY p_ListPrevious : ITF_LinkedList_Node
+]]></Declaration>
+      <Get Name="Get" Id="{a9c21024-3b02-43d7-bc3f-b1ac2bb904e8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[p_ListPrevious := itf_ListPrevious;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{755fe7ff-a81c-42c8-8e0a-126358d187bb}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[itf_ListPrevious := p_ListPrevious;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+  </POU>
+</TcPlcObject>

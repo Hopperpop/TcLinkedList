@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_Car" Id="{f48c1ede-733f-42f9-90bd-fec45d9a843c}" SpecialFunc="None">
+    <Declaration><![CDATA[{attribute 'hide_all_locals'}
+FUNCTION_BLOCK FB_Car EXTENDS FB_LinkedList_Node IMPLEMENTS ITF_Car
+
+VAR
+	Locked:		BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="FB_init" Id="{c1871cd6-aecc-4b40-b7ea-f830c857e06f}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : 	BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : 	BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[p_LinkMaster := MAIN.fbCarFleet;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="p_Locked" Id="{383cc081-e986-4e8b-8019-1ff2809dc156}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'call'}
+PROPERTY p_Locked : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{f416bf3c-1616-48df-85b4-84cdf418be81}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[p_Locked := Locked;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{0a2a5928-5d97-4a74-865b-dae9e6f089e9}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Locked := p_Locked;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+  </POU>
+</TcPlcObject>

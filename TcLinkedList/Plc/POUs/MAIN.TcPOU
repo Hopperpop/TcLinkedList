@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{69a48790-aa11-40bc-993f-b4e2d9d0d56f}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	fbCarFleet:		FB_CarGroup;
+	fbCar_Red:		FB_Car;
+	fbCar_Green:	FB_Car;
+	fbCar_Blue:		FB_Car;
+
+	fbGarage:		FB_CarGroup;
+	fbCorvette:		FB_Car := ( p_LinkMaster := fbGarage );
+	fbMustang:		FB_Car := ( p_LinkMaster := fbGarage );
+
+	//Triggers
+	xSellCar:		BOOL;
+	xBuyCar:		BOOL;
+END_VAR
+
+VAR_TEMP
+	{attribute 'hide'} 
+	pCar:			POINTER TO FB_Car;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF xSellCar THEN
+	xSellCar := FALSE; //Reset trigger
+	//Get last car in the garage list and sell it to the fleet
+	IF __QUERYPOINTER(fbGarage.mListGetNode( fbGarage.ListLength - 1), pCar) THEN
+		pCar^.p_LinkMaster := fbCarFleet;
+	END_IF
+END_IF
+
+IF xBuyCar THEN
+	xBuyCar := FALSE; //Reset trigger
+	//Get first car from the fleed and add it to the garage
+	IF __QUERYPOINTER(fbCarFleet.mListGetNode(0), pCar) THEN
+		pCar^.p_LinkMaster := fbGarage;
+	END_IF
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

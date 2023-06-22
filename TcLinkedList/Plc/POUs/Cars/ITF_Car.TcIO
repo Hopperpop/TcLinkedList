@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="ITF_Car" Id="{db28b9c9-9ce4-4367-9c76-e0097f42a943}">
+    <Declaration><![CDATA[INTERFACE ITF_Car
+]]></Declaration>
+    <Property Name="p_Locked" Id="{73bd7050-5fa0-41ec-aacc-eb94aaf2fedf}">
+      <Declaration><![CDATA[PROPERTY p_Locked : BOOL]]></Declaration>
+      <Get Name="Get" Id="{cf8d8e33-dd2e-4565-a438-5937e84b0a47}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{ed1c8819-440a-4240-9147-3447aab7e354}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+  </Itf>
+</TcPlcObject>

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="ITF_LinkedList_Node" Id="{9e732ef4-819a-4a28-bc73-2f3c564f0e55}">
+    <Declaration><![CDATA[INTERFACE ITF_LinkedList_Node EXTENDS __SYSTEM.IQueryInterface
+]]></Declaration>
+    <Property Name="p_IsLinkMaster" Id="{6ba6d3a8-c654-4953-adcf-028da2ff855f}">
+      <Declaration><![CDATA[PROPERTY p_IsLinkMaster : BOOL]]></Declaration>
+      <Get Name="Get" Id="{be4c69b2-31c6-488e-bcd4-1be63f64b77e}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="p_ListNext" Id="{c7aacd18-7e8d-4845-a068-5a5b4c61cb1f}">
+      <Declaration><![CDATA[PROPERTY p_ListNext : ITF_LinkedList_Node]]></Declaration>
+      <Get Name="Get" Id="{30060319-adfc-4b22-8a56-170135afd4fb}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{8075ab13-a6cb-4a8c-8a3e-1c61c6ee1240}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="p_ListPrevious" Id="{96c8da52-abd8-4595-b354-8a66255646b8}">
+      <Declaration><![CDATA[PROPERTY p_ListPrevious : ITF_LinkedList_Node]]></Declaration>
+      <Get Name="Get" Id="{e45a4399-f29e-4fa6-b3e2-1bc1faec3af7}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{add75c6e-3855-43cc-8a87-4869de2f681e}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+  </Itf>
+</TcPlcObject>
